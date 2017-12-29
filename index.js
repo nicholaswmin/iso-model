@@ -6,7 +6,7 @@ const pathval = require('pathval')
 class IsoModel extends EventEmitter {
   constructor(data) {
     super()
-    this.data = data
+    this.data = JSON.parse(JSON.stringify(data))
   }
 
   getData() {
@@ -54,8 +54,10 @@ class IsoModel extends EventEmitter {
         this.splice(payload.data.path, payload.data.from, payload.data.to, idSocket)
         break;
       default:
-        console.warn('Cannot determine operation', paylod.operation)
+        console.warn('Cannot determine operation', payload.operation)
     }
+
+    return this
   }
 }
 

@@ -6,7 +6,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # Lockfiles
-package-lock.json
 
 # Runtime data
 pids

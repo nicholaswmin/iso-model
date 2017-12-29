@@ -13,7 +13,6 @@ class IsoModel extends EventEmitter {
     pathval.setPathValue(this.data, path, value)
 
     this.emit('set', { path, value })
-
     return this
   }
 
@@ -30,7 +29,6 @@ class IsoModel extends EventEmitter {
     arr.splice(from, to)
 
     this.emit('splice', { from, to })
-
     return this
   }
 

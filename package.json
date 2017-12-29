@@ -4,6 +4,7 @@
   "description": "Isomorphic data models via web-sockets",
   "main": "index.js",
   "scripts": {
+    "example": "node example/server.js",
     "test": "mocha test"
   },
   "repository": {
@@ -25,5 +26,8 @@
   "dependencies": {
     "pathval": "^1.1.0",
     "socket.io": "^2.0.4"
+  },
+  "devDependencies": {
+    "express": "^4.16.2"
   }
 }

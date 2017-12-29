@@ -1,11 +1,19 @@
 'use strict'
 
-const app = require('http').createServer()
-const io = require('socket.io')(app)
-const IsoModel = require('./index.js')
+const path = require('path')
+const express = require('express')
+const app = express()
+const server = require('http').Server(app)
+const io = require('socket.io')(server)
+const IsoModel = require('../index.js')
 
-app.listen(2000, () => {
-  console.info('Listening on 2000')
+app.use('/app', express.static(path.resolve(__dirname, '../iso-model/')))
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/example.html')
+})
+
+server.listen(2000, () => {
+  console.info('Success! Navigate your browser to: http://localhost:2000')
 })
 
 const partyData = new IsoModel({

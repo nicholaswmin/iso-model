@@ -1,0 +1,25 @@
+{
+  "name": "iso-model",
+  "version": "0.1.0",
+  "description": "Isomorphic data models via web-sockets",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicholaswmin/iso-model.git"
+  },
+  "keywords": [
+    "isomorphic",
+    "data-model",
+    "polymer",
+    "socketio"
+  ],
+  "author": "@nicholaswmin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nicholaswmin/iso-model/issues"
+  },
+  "homepage": "https://github.com/nicholaswmin/iso-model#readme"
+}

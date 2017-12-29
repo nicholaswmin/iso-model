@@ -1,0 +1,105 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-input/paper-input.html">
+
+<!--
+`iso-model`
+Isomorphic data models via web-sockets
+
+@demo demo/index.html
+-->
+
+<dom-module id="iso-model">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <paper-input label="Paper Name" value="{{data.roomName::input}}"></paper-input>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'iso-model',
+
+      properties: {
+        suspendedEmit: {
+          type: Boolean,
+          value: true,
+          readOnly: true
+        },
+
+        data: {
+          type: Object,
+          value: null,
+          notify: true
+        }
+      },
+
+      observers: [
+        '_determineOperation(data.*)'
+      ],
+
+      attached: function() {
+        window.isoModel = this
+      },
+
+      _determineOperation: function(changes) {
+        if (changes.path.includes('.splices')) {
+          const indexSplices = changes.value.indexSplices[0]
+          if (indexSplices.addedCount) {
+            // PUSH
+            const path = changes.path.replace(/data./g,'').replace(/.splices/g,'')
+            const item = changes.value.indexSplices[0].object[0]
+
+            this.emit('push', { path, item })
+          } else if (indexSplices.removed) {
+            // SPLICE
+            const keySplices = changes.value.keySplices[0]
+            const indices = keySplices.removed.map(i => +i.replace(/#/g,''))
+            const from = indices[0]
+            const to = indices.length
+
+            this.emit('splice', { from, to })
+          }
+        } else {
+          if (changes.path.includes('.length')) return
+          // SET
+          const path = changes.path.replace(/data./g,'').replace(/#/g,'')
+          const value = changes.value
+
+          this.emit('set', { path, value })
+        }
+      },
+
+      emit(operation, data) {
+        if (this.suspendedEmit) return
+
+        console.info('Emmiting', operation, data)
+      },
+
+      applyOperation(operation, data) {
+        this._setSuspendedEmit(true)
+
+        switch (operation) {
+          case 'set':
+            this.set(`data.${data.path}`, data.value)
+            break;
+
+          case 'push':
+            this.push(`data.${data.path}`, data.item)
+            break;
+
+          case 'splice':
+            this.splice(`data.${data.path}`, data.from, data.to)
+            break;
+          default:
+            console.warn('Cannot determine operation', operation)
+        }
+
+        this._setSuspendedEmit(false)
+      }
+    });
+  </script>
+</dom-module>

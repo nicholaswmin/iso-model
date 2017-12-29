@@ -7,7 +7,6 @@ before_script:
   - sudo mv /usr/bin/google-chrome-beta /usr/bin/google-chrome
 node_js: stable
 addons:
-  firefox: latest
   apt:
     sources:
       - google-chrome
@@ -16,7 +15,7 @@ addons:
 script:
   - npm install
   - cd iso-model
-  - bower install
+  - bower install --silent
   - cd ..
   - mocha test
   - cd iso-model

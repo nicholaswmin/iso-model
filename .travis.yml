@@ -13,6 +13,7 @@ addons:
       - google-chrome-beta
 script:
   - npm install
+  - npm install -g bower
   - ls
   - cd iso-model
   - bower install

@@ -43,6 +43,16 @@ Isomorphic data models via web-sockets
 
       attached: function() {
         window.isoModel = this
+
+        this.socket = io('http://localhost:2000')
+        this.socket.on('initialize', data => {
+          this.set('data', data)
+          this._setSuspendedEmit(false)
+        })
+
+        this.socket.on('operation', payload => {
+          this.applyOperation(payload.operation, payload.data)
+        })
       },
 
       _determineOperation: function(changes) {
@@ -75,11 +85,14 @@ Isomorphic data models via web-sockets
 
       emit(operation, data) {
         if (this.suspendedEmit) return
+        console.info('emitting operation:', operation)
 
-        console.info('Emmiting', operation, data)
+        this.socket.emit('operation', { operation, data })
       },
 
       applyOperation(operation, data) {
+        console.info('applying operation:', operation)
+
         this._setSuspendedEmit(true)
 
         switch (operation) {
@@ -102,4 +115,6 @@ Isomorphic data models via web-sockets
       }
     });
   </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js"></script>
 </dom-module>

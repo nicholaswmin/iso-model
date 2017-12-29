@@ -15,6 +15,6 @@ script:
   - npm install
   - (cd iso-model && bower install --key)
   - mocha test
-  - xvfb-run wct --root iso-model/ -l chrome
+  - xvfb-run polymer test -l chrome
 
 dist: trusty

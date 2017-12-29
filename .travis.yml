@@ -13,8 +13,8 @@ addons:
       - google-chrome-beta
 script:
   - npm install
-  - (cd iso-model && bower install --key)
+  - cd iso-model && bower install && cd ..
   - mocha test
-  - xvfb-run polymer test -l chrome
+  - cd iso-model && xvfb-run polymer test -l chrome
 
 dist: trusty

@@ -17,16 +17,25 @@ server.listen(2000, () => {
   console.info('Success! Navigate your browser to: http://localhost:2000')
 })
 
-const partyData = new IsoModel({
-  animals: [
-    { id: '1514537152535', name: 'Lion' }
+const myData = new IsoModel({
+  parents: [
+    {
+      id: '1514537152535',
+      name: 'Foo',
+      children: [
+        {
+          id: '234234234232',
+          name: 'Small Foo'
+        }
+      ]
+    }
   ],
-  roomName: 'Hola'
+  cardName: 'Hola'
 })
 
 let subscribers = []
 
-partyData.on('operation', payload => {
+myData.on('operation', payload => {
   subscribers.filter(subscriber => subscriber !== payload.id)
     .forEach(subscriber => {
       io.to(subscriber).emit('operation', payload)
@@ -39,12 +48,12 @@ io.on('connection', socket => {
   subscribers.push(socket.id)
 
   socket.on('operation', payload => {
-    partyData.applyOperation(socket.id, payload)
+    myData.applyOperation(socket.id, payload)
   })
 
   socket.on('disconnect', () => {
     subscribers = subscribers.filter(subscriber => subscriber.id !== socket.id)
   })
 
-  socket.emit('initialize', partyData.getData())
+  socket.emit('initialize', myData.getData())
 })

@@ -34,11 +34,14 @@
             Closing down all windows are re-opening them should show the data
             in the state it was before the windows were closed.
           </li>
+          <li>
+            Nested data structures are supported, even multi-level nested Arrays.
+          </li>
         </ul>
       </p>
       <template is="dom-bind">
         <iso-model data="{{data}}"></iso-model>
-        <editable-list items="{{data.animals}}"></editable-list>
+        <editable-list data="{{data}}"></editable-list>
       </template>
     </div>
   </body>

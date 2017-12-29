@@ -3,13 +3,57 @@
     <style>
       :host {
         display: block;
+        color: #ccc;
+      }
+
+      .row {
+        margin: 2em 0;
+        padding: 1em 1.5em;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+      }
+
+      .controls {
+        text-align: right;
+      }
+
+      .controls paper-input,
+      .controls button {
+        display: inline-block;
+      }
+
+      .controls paper-input {
+        width: 80%;
+        text-align: left;
+      }
+
+      .controls button {
+        width: 15%;
+        max-width: 40px;
       }
     </style>
-    <button on-tap="add">Add New</button>
-    <template is="dom-repeat" items="{{items}}">
-      <paper-input label="Paper Name" value="{{item.name::input}}"></paper-input>
-      <button data-id$="[[item.id]]" on-tap="delete">Delete</button>
-    </template>
+    <ol>
+      <paper-input label="Card Name" value="{{data.cardName::input}}"></paper-input>
+      <button on-tap="add">Add Parent Row</button>
+      <template is="dom-repeat" items="{{data.parents}}">
+        <li class="row">
+            <button data-id$="[[item.id]]" on-tap="addChild">Add Child Row</button>
+            <div class="controls">
+              <paper-input label="Parent" value="{{item.name::input}}"></paper-input>
+              <button data-id$="[[item.id]]" on-tap="delete">x</button>
+            </div>
+          <ol>
+            <template is="dom-repeat" items="{{item.children}}" as="child">
+              <li class="inner-row">
+                <div class="controls">
+                  <paper-input label="Child" value="{{child.name::input}}"></paper-input>
+                  <button data-id$="[[child.id]]" on-tap="deleteChild">x</button>
+                </div>
+              </li>
+            </template>
+          </ol>
+        </li>
+      </template>
+    </ol>
   </template>
 
   <script>
@@ -18,7 +62,7 @@
       is: 'editable-list',
 
       properties: {
-        items: {
+        data: {
           type: Object,
           value: null,
           notify: true
@@ -26,17 +70,49 @@
       },
 
       add: function() {
-        this.push('items', {
+        this.push('data.parents', {
           id: this._getId(),
-          name: 'Foo'
+          name: 'Foo',
+          children: [
+            {
+              id: this._getId(),
+              name: 'Small Foo'
+            }
+          ]
+        })
+      },
+
+      addChild: function(e) {
+        const idRow = e.target.getAttribute('data-id')
+        const rowIndex = this.data.parents.reduce((index, row, i) => {
+          if (row.id === idRow) {
+            index = i
+          }
+
+          return index
+        }, -1)
+
+        this.push(`data.parents.${rowIndex}.children`, {
+          id: this._getId(),
+          name: 'Foo Child'
         })
       },
 
       delete: function(e) {
-        this.items.forEach((item, i) => {
+        this.data.parents.forEach((item, i) => {
           if (item.id === e.target.getAttribute('data-id')) {
-            this.splice('items', i, 1)
+            this.splice('data.parents', i, 1)
           }
+        })
+      },
+
+      deleteChild: function(e) {
+        this.data.parents.forEach((item, i) => {
+          item.children.forEach((child, j) => {
+            if (child.id === e.target.getAttribute('data-id')) {
+              this.splice(`data.parents.${i}.children`, j, 1)
+            }
+          })
         })
       },
 

@@ -15,6 +15,8 @@ Isomorphic data models via web-sockets
   </template>
 
   <script>
+    let oldData
+
     Polymer({
 
       is: 'iso-model',
@@ -53,47 +55,51 @@ Isomorphic data models via web-sockets
       },
 
       _determineOperation: function(changes) {
-        if (changes.path.includes('.splices')) {
-          const path = changes.path.replace(/data./g,'').replace(/.splices/g,'')
-          const indexSplices = changes.value.indexSplices[0]
+        if (!this.data) return
 
-          if (indexSplices.addedCount) {
-            // PUSH
-            const key = indexSplices.addedKeys[0]
-            const item = this.get(['data.' + path, key])
-            this.emit('push', { path, item })
-          } else if (indexSplices.removed) {
-            // SPLICE
-            const from = indexSplices.index
-            const to = indexSplices.removed.length
+        let diffs
 
-            this.emit('splice', { path, from, to })
-          }
-        } else {
-          // SET
-          if (changes.path.includes('.length') || !changes.base) return
-          const value = changes.value
-          let path
-
-          if (changes.path.includes('#')) {
-            // DEEP SET
-            const key = +changes.path.split('#').pop().split('.').shift()
-            const parts = changes.path.split('.')
-            const keyIndex = parts.indexOf('#' + key)
-            const changedArrName = parts[keyIndex - 1]
-            const collection = Polymer.Collection.get(changes.base[changedArrName])
-            const changedItem = collection.getItem(`#${key}`)
-            const changedIndex = changes.base[changedArrName].indexOf(changedItem)
-
-            path = `${changedArrName}.${changedIndex}.${parts.pop()}`
-
-          } else {
-            // REGULAR SET
-            path = changes.path.replace(/data./g,'').replace(/#/g,'')
-          }
-
-          this.emit('set', { path, value })
+        if (oldData) {
+          diffs = DeepDiff.diff(oldData, this.data)
         }
+
+        if (diffs) {
+          diffs.forEach(diff => {
+            const path = diff.path.join('.')
+
+            switch (diff.kind) {
+              case 'E':
+
+                const value = diff.rhs
+                this.emit('set', { path, value })
+                break;
+
+              case 'A':
+                const item = diff.item
+
+                switch (item.kind) {
+                  case 'N':
+                    this.emit('push', { path, item: item.rhs })
+                    break;
+
+                  case 'D':
+                    this.emit('splice', {
+                      path,
+                      from: diff.index,
+                      to: 1
+                    })
+                    break;
+                  default:
+                    console.warn('Cannot determine operation')
+                }
+                break;
+              default:
+                console.warn('Cannot determine operation')
+            }
+          })
+        }
+
+        oldData = JSON.parse(JSON.stringify(this.data))
       },
 
       emit: function(operation, data) {
@@ -130,4 +136,5 @@ Isomorphic data models via web-sockets
   </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js"></script>
+  <script src="lib/deep-diff.js"></script>
 </dom-module>

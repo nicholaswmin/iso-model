@@ -7,8 +7,9 @@ structures.
 ## Run the example
 
 ```bash
+npm install
 npm run example
-# .. and open your browser at http://localhost:2000
+# ..and open your browser at http://localhost:2000
 ```
 
 ## Authors

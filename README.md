@@ -1,10 +1,10 @@
 # iso-model
 [![Build Status](https://travis-ci.org/nicholaswmin/iso-model.svg?branch=master)](https://travis-ci.org/nicholaswmin/iso-model)
 
-Isomorphic data models via web-sockets.
+Isomorphic data models.
 
-Manipulate data on the UI with the changes reflecting to back-end in-memory data
-structures.
+Data binding on the UI that auto-syncs with the server and all connected
+clients.
 
 *More details pending..*
 
@@ -19,14 +19,14 @@ npm run example
 ## Test
 
 ```bash
-# run server component(Node module) tests.
+# Run server component(Node module) tests.
 $ mocha test
 
-# run UI component(Polymer element) tests.
+# Run UI component(Polymer element) tests.
 $ cd iso-model
 $ polymer test -l chrome
 
-# run both test.
+# Run both tests.
 $ npm test
 ```
 

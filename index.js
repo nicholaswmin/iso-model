@@ -32,7 +32,7 @@ class IsoModel extends EventEmitter {
     const arr = pathval.getPathValue(this.data, path)
     arr.splice(from, to)
 
-    this.emit('splice', { from, to }, idSocket)
+    this.emit('splice', { path, from, to }, idSocket)
     return this
   }
 
@@ -51,7 +51,7 @@ class IsoModel extends EventEmitter {
         break;
 
       case 'splice':
-        this.set(payload.data.path, payload.data.from, payload.data.to, idSocket)
+        this.splice(payload.data.path, payload.data.from, payload.data.to, idSocket)
         break;
       default:
         console.warn('Cannot determine operation', paylod.operation)

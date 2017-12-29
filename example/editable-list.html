@@ -1,0 +1,48 @@
+<dom-module id="editable-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <button on-tap="add">Add New</button>
+    <template is="dom-repeat" items="{{items}}">
+      <paper-input label="Paper Name" value="{{item.name::input}}"></paper-input>
+      <button data-id$="[[item.id]]" on-tap="delete">Delete</button>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'editable-list',
+
+      properties: {
+        items: {
+          type: Object,
+          value: null,
+          notify: true
+        }
+      },
+
+      add: function() {
+        this.push('items', {
+          id: this._getId(),
+          name: 'Foo'
+        })
+      },
+
+      delete: function(e) {
+        this.items.forEach((item, i) => {
+          if (item.id === e.target.getAttribute('data-id')) {
+            this.splice('items', i, 1)
+          }
+        })
+      },
+
+      _getId: function() {
+        return String(Date.now())
+      }
+    })
+  </script>
+</dom-module>

@@ -5,6 +5,7 @@
     <link rel="import" href="/app/bower_components/polymer/polymer.html">
     <link rel="import" href="/app/bower_components/paper-input/paper-input.html">
     <link rel="import" href="/app/iso-model.html">
+    <link rel="import" href="/example/editable-list.html">
   </head>
   <style>
     html {
@@ -35,7 +36,10 @@
           </li>
         </ul>
       </p>
-      <iso-model><iso-model>
+      <template is="dom-bind">
+        <iso-model data="{{data}}"></iso-model>
+        <editable-list items="{{data.animals}}"></editable-list>
+      </template>
     </div>
   </body>
 </html>

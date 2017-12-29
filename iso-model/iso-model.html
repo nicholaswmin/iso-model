@@ -12,7 +12,6 @@ Isomorphic data models via web-sockets
         display: block;
       }
     </style>
-    <paper-input label="Paper Name" value="{{data.roomName::input}}"></paper-input>
   </template>
 
   <script>
@@ -43,6 +42,7 @@ Isomorphic data models via web-sockets
 
         this.socket = io('http://localhost:2000')
         this.socket.on('initialize', data => {
+          this._setSuspendedEmit(true)
           this.set('data', data)
           this._setSuspendedEmit(false)
         })
@@ -54,40 +54,56 @@ Isomorphic data models via web-sockets
 
       _determineOperation: function(changes) {
         if (changes.path.includes('.splices')) {
+          const path = changes.path.replace(/data./g,'').replace(/.splices/g,'')
           const indexSplices = changes.value.indexSplices[0]
+
           if (indexSplices.addedCount) {
             // PUSH
-            const path = changes.path.replace(/data./g,'').replace(/.splices/g,'')
-            const item = changes.value.indexSplices[0].object[0]
-
+            const key = indexSplices.addedKeys[0]
+            const item = this.get(['data.' + path, key])
             this.emit('push', { path, item })
           } else if (indexSplices.removed) {
             // SPLICE
-            const keySplices = changes.value.keySplices[0]
-            const indices = keySplices.removed.map(i => +i.replace(/#/g,''))
-            const from = indices[0]
-            const to = indices.length
+            const from = indexSplices.index
+            const to = indexSplices.removed.length
 
-            this.emit('splice', { from, to })
+            this.emit('splice', { path, from, to })
           }
         } else {
-          if (changes.path.includes('.length')) return
           // SET
-          const path = changes.path.replace(/data./g,'').replace(/#/g,'')
+          if (changes.path.includes('.length') || !changes.base) return
           const value = changes.value
+          let path
+
+          if (changes.path.includes('#')) {
+            // DEEP SET
+            const key = +changes.path.split('#').pop().split('.').shift()
+            const parts = changes.path.split('.')
+            const keyIndex = parts.indexOf('#' + key)
+            const changedArrName = parts[keyIndex - 1]
+            const collection = Polymer.Collection.get(changes.base[changedArrName])
+            const changedItem = collection.getItem(`#${key}`)
+            const changedIndex = changes.base[changedArrName].indexOf(changedItem)
+
+            path = `${changedArrName}.${changedIndex}.${parts.pop()}`
+
+          } else {
+            // REGULAR SET
+            path = changes.path.replace(/data./g,'').replace(/#/g,'')
+          }
 
           this.emit('set', { path, value })
         }
       },
 
-      emit(operation, data) {
+      emit: function(operation, data) {
         if (this.suspendedEmit) return
         console.info('emitting operation:', operation)
 
         this.socket.emit('operation', { operation, data })
       },
 
-      applyOperation(operation, data) {
+      applyOperation: function(operation, data) {
         console.info('applying operation:', operation)
 
         this._setSuspendedEmit(true)

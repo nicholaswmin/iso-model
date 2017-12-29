@@ -83,6 +83,10 @@ Isomorphic data models via web-sockets
                     break;
 
                   case 'D':
+                    // @TODO
+                    // - Splicing here always assume that the number
+                    //   of spliced items is always 1.
+                    // - Implement emmiting multi-element splicings.
                     this.emit('splice', {
                       path,
                       from: diff.index,

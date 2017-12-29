@@ -13,7 +13,7 @@ addons:
       - google-chrome-beta
 script:
   - npm install
-  - (cd .iso-model && bower install --key)
+  - (cd iso-model && bower install --key)
   - mocha test
   - xvfb-run wct --root iso-model/ -l chrome
 

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "example": "node example/server.js",
-    "test": "mocha test"
+    "test": "mocha test && wct --root iso-model/ -l chrome"
   },
   "repository": {
     "type": "git",

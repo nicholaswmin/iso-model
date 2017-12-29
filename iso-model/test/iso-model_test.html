@@ -9,6 +9,7 @@
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
 
+    <link rel="import" href="../../polymer/polymer.html">
     <link rel="import" href="../iso-model.html">
   </head>
   <body>
@@ -19,12 +20,211 @@
     </test-fixture>
 
     <script>
-      suite('iso-model', function() {
-        test('instantiating the element works', function() {
-          var element = fixture('basic');
-          assert.equal(element.is, 'iso-model');
+      let isoModel
+
+      const testData = {
+        parents: [
+          {
+            id: '1514537152535',
+            name: 'Foo',
+            children: [
+              {
+                id: '234234234232',
+                name: 'Small Foo'
+              },
+              {
+                id: '239894923888',
+                name: 'Small Bac'
+              }
+            ]
+          }
+        ],
+        cardName: 'Hawaii'
+      }
+
+      class MockSocket {
+        constructor() {
+          this.listeners = []
+          this.emittedEvents = []
+          setTimeout(() => {
+            this.fireListener('initialize', JSON.parse(JSON.stringify(testData)))
+          })
+        }
+
+        on(eventName, cb) {
+          this.listeners.push({ eventName, cb })
+        }
+
+        fireListener(eventName, data) {
+          this.listeners
+            .find(listener => listener.eventName === eventName)
+            .cb(data)
+        }
+
+        emit(eventName, data) {
+          this.emittedEvents.push({eventName, data})
+        }
+
+        getEmmitedEvents() {
+          return this.emittedEvents
+        }
+
+        getLastEmittedEvent() {
+          return this.emittedEvents[this.emittedEvents.length - 1]
+        }
+      }
+
+      setup(() => {
+        window.io = function() {
+          return new MockSocket()
+        }
+
+        isoModel = fixture('basic')
+      })
+
+      suite('Event emits on data updates', () => {
+
+        test('instantiating the element works', () => {
+          assert.equal(isoModel.is, 'iso-model')
         });
-      });
+
+        test('connects to a socket and receives the initial data', done => {
+          setTimeout(() => {
+            assert.deepEqual(isoModel.data, testData)
+            done()
+          })
+        });
+
+        test('setting a prop by value emits an event', done => {
+          setTimeout(() => {
+            isoModel.set('data.cardName', 'Honolulu')
+            const emittedEvent = isoModel.socket.getLastEmittedEvent()
+            const emittedEvents = isoModel.socket.getEmmitedEvents()
+
+            assert.lengthOf(emittedEvents, 1, '1 emitted event')
+            assert.equal(emittedEvent.eventName, 'operation')
+            assert.equal(emittedEvent.data.operation, 'set')
+            assert.equal(emittedEvent.data.data.path, 'cardName')
+            assert.equal(emittedEvent.data.data.value, 'Honolulu')
+
+            done()
+          })
+        })
+
+        test('pushing an item in an Array prop emits an event', done => {
+          setTimeout(() => {
+            isoModel.push('data.parents.0.children', {
+              id: '123981298',
+              name: 'Small Baz'
+            })
+            const emittedEvent = isoModel.socket.getLastEmittedEvent()
+            const emittedEvents = isoModel.socket.getEmmitedEvents()
+
+            assert.lengthOf(emittedEvents, 1, '1 emitted event')
+            assert.equal(emittedEvent.eventName, 'operation')
+            assert.equal(emittedEvent.data.operation, 'push')
+            assert.equal(emittedEvent.data.data.path, 'parents.0.children')
+            assert.deepEqual(emittedEvent.data.data.item, {
+              id: '123981298',
+              name: 'Small Baz'
+            })
+
+            done()
+          })
+        })
+
+        test('splicing an Array prop emits an event', done => {
+          setTimeout(() => {
+            isoModel.splice('data.parents.0.children', 1, 1)
+            const emittedEvent = isoModel.socket.getLastEmittedEvent()
+            const emittedEvents = isoModel.socket.getEmmitedEvents()
+
+            assert.lengthOf(emittedEvents, 1, '1 emitted event')
+            assert.equal(emittedEvent.eventName, 'operation')
+            assert.equal(emittedEvent.data.operation, 'splice')
+            assert.equal(emittedEvent.data.data.from, 1)
+            assert.equal(emittedEvent.data.data.to, 1)
+            done()
+          })
+        })
+      })
+
+      suite('#applyOperation', () => {
+        test('--set', done => {
+          setTimeout(() => {
+            isoModel.socket.fireListener('operation', {
+              operation: 'set',
+              data: {
+                path: 'cardName',
+                value: 'Moscow'
+              }
+            })
+
+            assert.equal(isoModel.data.cardName, 'Moscow')
+            assert.lengthOf(
+              isoModel.socket.getEmmitedEvents(),
+              0,
+              '0 events emitted while applying operation'
+            )
+
+            done()
+          })
+        })
+
+        test('--push', done => {
+          setTimeout(() => {
+            isoModel.socket.fireListener('operation', {
+              operation: 'push',
+              data: {
+                path: 'parents.0.children',
+                item: {
+                  id: '123981298',
+                  name: 'Small Baz'
+                }
+              }
+            })
+
+            assert.lengthOf(isoModel.data.parents[0].children, 3, '3 children')
+            assert.deepEqual(isoModel.data.parents[0].children.pop(), {
+              id: '123981298',
+              name: 'Small Baz'
+            })
+            assert.lengthOf(
+              isoModel.socket.getEmmitedEvents(),
+              0,
+              '0 events emitted while applying operation'
+            )
+
+            done()
+          })
+        })
+
+        test('--splice', done => {
+          setTimeout(() => {
+            isoModel.socket.fireListener('operation', {
+              operation: 'splice',
+              data: {
+                path: 'parents.0.children',
+                from: 1,
+                to: 1
+              }
+            })
+
+            assert.lengthOf(isoModel.data.parents[0].children, 1, '1 child')
+            assert.deepEqual(isoModel.data.parents[0].children.pop(), {
+              id: '234234234232',
+              name: 'Small Foo'
+            })
+            assert.lengthOf(
+              isoModel.socket.getEmmitedEvents(),
+              0,
+              '0 events emitted while applying operation'
+            )
+
+            done()
+          })
+        })
+      })
     </script>
   </body>
 </html>

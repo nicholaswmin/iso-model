@@ -48,7 +48,7 @@ describe('#getData', () => {
 
 describe('#applyOperation', () => {
   describe('--set', () => {
-    it('sets the value of a property by path', () => {
+    it('sets the value of a prop by path', () => {
       const data = model.applyOperation(idSocket, {
         operation: 'set',
         data: {
@@ -80,7 +80,7 @@ describe('#applyOperation', () => {
   })
 
   describe('--push', () => {
-    it('pushes an item in an Array property by path', () => {
+    it('pushes an item in an Array prop', () => {
       const data = model.applyOperation(idSocket, {
         operation: 'push',
         data: {

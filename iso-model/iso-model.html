@@ -30,7 +30,9 @@ Isomorphic data models via web-sockets
 
         data: {
           type: Object,
-          value: null,
+          value: function() {
+            return null
+          },
           notify: true
         }
       },

@@ -1,6 +1,8 @@
 language: node_js
 sudo: required
 before_script:
+  - npm install -g web-component-tester
+  - npm install -g bower polymer-cli@0.18.1
   - sudo mv /usr/bin/google-chrome /usr/bin/google-chrome-old
   - sudo mv /usr/bin/google-chrome-beta /usr/bin/google-chrome
 node_js: stable
@@ -13,8 +15,6 @@ addons:
       - google-chrome-beta
 script:
   - npm install
-  - npm install -g bower
-  - ls
   - cd iso-model
   - bower install
   - cd ..

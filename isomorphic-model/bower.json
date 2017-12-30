@@ -1,7 +1,7 @@
 {
-  "name": "iso-model",
+  "name": "isomorphic-model",
   "description": "Isomorphic data models via web-sockets",
-  "main": "iso-model.html",
+  "main": "isomorphic-model.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
     "paper-input": "PolymerElements/paper-input#1.1.24"
@@ -9,7 +9,7 @@
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
-    "web-component-tester": "^6.0.0-prerelease.5",
+    "web-component-tester": "^6.4.1",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
   }
 }

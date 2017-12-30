@@ -5,10 +5,10 @@ const express = require('express')
 const app = express()
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
-const IsoModel = require('../index.js')
+const IsomorphicModel = require('../index.js')
 
 app.use('/example', express.static(__dirname + '/'))
-app.use('/app', express.static(path.resolve(__dirname, '../iso-model/')))
+app.use('/app', express.static(path.resolve(__dirname, '../isomorphic-model/')))
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/example.html')
 })
@@ -17,7 +17,7 @@ server.listen(2000, () => {
   console.info('Success! Navigate your browser to: http://localhost:2000')
 })
 
-const myData = new IsoModel({
+const myData = new IsomorphicModel({
   parents: [
     {
       id: '1514537152535',

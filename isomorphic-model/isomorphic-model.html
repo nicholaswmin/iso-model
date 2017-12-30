@@ -1,11 +1,11 @@
 <!--
-`iso-model`
+`isomorphic-model`
 Isomorphic data models via web-sockets
 
 @demo demo/index.html
 -->
 
-<dom-module id="iso-model">
+<dom-module id="isomorphic-model">
   <template>
     <style>
       :host {
@@ -19,7 +19,7 @@ Isomorphic data models via web-sockets
 
     Polymer({
 
-      is: 'iso-model',
+      is: 'isomorphic-model',
 
       properties: {
         suspendedEmit: {
@@ -47,7 +47,7 @@ Isomorphic data models via web-sockets
       ],
 
       attached: function() {
-        window.isoModel = this
+        window.isomorphicModel = this
 
         this.socket = io(this.socketAddress)
         this.socket.on('initialize', data => {

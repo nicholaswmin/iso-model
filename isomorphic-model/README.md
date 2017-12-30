@@ -1,4 +1,4 @@
-# \<iso-model\>
+# \<isomorphic-model\>
 
 Isomorphic data models via web-sockets
 

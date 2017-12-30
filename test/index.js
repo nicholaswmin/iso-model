@@ -1,3 +1,3 @@
 'use strict'
 
-require('./iso-model.spec')
+require('./isomorphic-model.spec')

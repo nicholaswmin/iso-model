@@ -1,5 +1,5 @@
-# iso-model
-[![Build Status](https://travis-ci.org/nicholaswmin/iso-model.svg?branch=master)](https://travis-ci.org/nicholaswmin/iso-model)
+# isomorphic-model
+[![Build Status](https://travis-ci.org/nicholaswmin/isomorphic-model.svg?branch=master)](https://travis-ci.org/nicholaswmin/isomorphic-model)
 
 Isomorphic data models.
 
@@ -23,7 +23,7 @@ npm run example
 $ mocha test
 
 # Run UI component(Polymer element) tests.
-$ cd iso-model
+$ cd isomorphic-model
 $ polymer test -l chrome
 
 # Run both tests.

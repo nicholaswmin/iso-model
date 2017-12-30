@@ -1,7 +1,7 @@
 'use strict'
 
 const chai = require('chai')
-const IsoModel = require('../index.js')
+const IsomorphicModel = require('../index.js')
 
 chai.should()
 
@@ -29,7 +29,7 @@ const testData = {
 let model
 
 beforeEach(() => {
-  model = new IsoModel(testData)
+  model = new IsomorphicModel(testData)
 })
 
 describe('instantiation', () => {

@@ -3,7 +3,7 @@
 const EventEmitter = require('events').EventEmitter
 const pathval = require('pathval')
 
-class IsoModel extends EventEmitter {
+class IsomorphicModel extends EventEmitter {
   constructor(data) {
     super()
     this.data = JSON.parse(JSON.stringify(data))
@@ -61,4 +61,4 @@ class IsoModel extends EventEmitter {
   }
 }
 
-module.exports = IsoModel
+module.exports = IsomorphicModel

@@ -14,11 +14,11 @@ addons:
       - google-chrome-beta
 script:
   - npm install
-  - cd iso-model
+  - cd isomorphic-model
   - bower install --silent
   - cd ..
   - mocha test
-  - cd iso-model
+  - cd isomorphic-model
   - xvfb-run polymer test -l chrome
 
 dist: trusty

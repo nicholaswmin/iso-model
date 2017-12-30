@@ -34,6 +34,11 @@ Isomorphic data models via web-sockets
             return null
           },
           notify: true
+        },
+
+        socketAddress: {
+          type: String,
+          value: null
         }
       },
 
@@ -44,7 +49,7 @@ Isomorphic data models via web-sockets
       attached: function() {
         window.isoModel = this
 
-        this.socket = io('http://localhost:2000')
+        this.socket = io(this.socketAddress)
         this.socket.on('initialize', data => {
           this._setSuspendedEmit(true)
           this.set('data', data)

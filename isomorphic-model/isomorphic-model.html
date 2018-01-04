@@ -36,27 +36,28 @@ Isomorphic data models via web-sockets
           notify: true
         },
 
-        socketAddress: {
-          type: String,
-          value: null
+        socket: {
+          type: Object
         }
       },
 
       observers: [
+        '_initialize(socket)',
         '_determineOperation(data.*)'
       ],
 
       attached: function() {
         window.isomorphicModel = this
+      },
 
-        this.socket = io(this.socketAddress)
-        this.socket.on('initialize', data => {
+      _initialize: function(socket) {
+        socket.on('initialize', data => {
           this._setSuspendedEmit(true)
           this.set('data', data)
           this._setSuspendedEmit(false)
         })
 
-        this.socket.on('operation', payload => {
+        socket.on('operation', payload => {
           this.applyOperation(payload.operation, payload.data)
         })
       },
@@ -146,6 +147,5 @@ Isomorphic data models via web-sockets
     });
   </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js"></script>
   <script src="lib/deep-diff.js"></script>
 </dom-module>

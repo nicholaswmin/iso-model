@@ -10,7 +10,7 @@ const IsomorphicModel = require('../index.js')
 app.use('/example', express.static(__dirname + '/'))
 app.use('/app', express.static(path.resolve(__dirname, '../isomorphic-model/')))
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/example.html')
+  res.sendFile(__dirname + '/index.html')
 })
 
 server.listen(2000, () => {

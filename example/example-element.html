@@ -1,0 +1,39 @@
+<link rel="import" href="/app/bower_components/polymer/polymer.html">
+<link rel="import" href="/app/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/app/isomorphic-model.html">
+<link rel="import" href="/example/editable-list.html">
+
+<dom-module id="example-element">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <isomorphic-model socket="[[socket]]" data="{{data}}"></isomorphic-model>
+    <editable-list data="{{data}}"></editable-list>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'example-element',
+
+      properties: {
+        socket: {
+          type: Object,
+          value: function() {
+            return io()
+          }
+        }
+      },
+
+      attached: function() {
+        window.exampleElement = this
+      }
+    })
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.slim.js"></script>
+</dom-module>

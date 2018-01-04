@@ -2,10 +2,7 @@
 <html>
   <head>
     <title>isomorphic-model example</title>
-    <link rel="import" href="/app/bower_components/polymer/polymer.html">
-    <link rel="import" href="/app/bower_components/paper-input/paper-input.html">
-    <link rel="import" href="/app/isomorphic-model.html">
-    <link rel="import" href="/example/editable-list.html">
+    <link rel="import" href="/example/example-element.html">
   </head>
   <style>
     html {
@@ -40,8 +37,7 @@
         </ul>
       </p>
       <template is="dom-bind">
-        <isomorphic-model socket-address="http://localhost:2000" data="{{data}}"></isomorphic-model>
-        <editable-list data="{{data}}"></editable-list>
+        <example-element></example-element>
       </template>
     </div>
   </body>

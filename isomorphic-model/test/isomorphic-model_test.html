@@ -15,7 +15,7 @@
   <body>
     <test-fixture id="basic">
       <template>
-        <isomorphic-model socket-address="http://localhost:2000"></isomorphic-model>
+        <isomorphic-model></isomorphic-model>
       </template>
     </test-fixture>
 
@@ -75,11 +75,8 @@
       }
 
       setup(() => {
-        window.io = function() {
-          return new MockSocket()
-        }
-
         isomorphicModel = fixture('basic')
+        isomorphicModel.set('socket', new MockSocket())
       })
 
       suite('Event emits on data updates', () => {
